@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace Aoc2018.Day01
 {
@@ -6,7 +7,18 @@ namespace Aoc2018.Day01
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Puzzle1();
+        }
+
+        static void Puzzle1()
+        {
+            var input = File.ReadAllLines("input.txt");
+
+            var frequencies = FrequencyParser.Parse(input);
+
+            var result = FrequencyCalibrator.CalculateFrequency(frequencies);
+
+            Console.WriteLine($"Day 01 - Puzzle 1: {result}");
         }
     }
 }
