@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Aoc2018.Day04.Common
 {
-    public class MostMinutesAsleepStrategy :
+    public class MostFrequentMinuteAsleepStrategy :
         AbstractMinutesAsleepBasedStrategy
     {
         public int StrategyValue(IReadOnlyList<Event> events)
@@ -22,7 +22,12 @@ namespace Aoc2018.Day04.Common
         {
             return events
                 .GroupBy(e => e.GuardId)
-                .OrderByDescending(g => TotalMinutesAsleep(g))
+                .OrderByDescending(g =>
+                {
+                    TotalMinutesAsleep(g, out var minutes);
+
+                    return minutes.Max();
+                })
                 .First()
                 .Key;
         }

@@ -9,6 +9,8 @@ namespace Aoc2018.Day04
         static void Main(string[] args)
         {
             Puzzle1();
+
+            Puzzle2();
         }
 
         static void Puzzle1()
@@ -19,9 +21,22 @@ namespace Aoc2018.Day04
 
             var organizedEvents = EventOrganizer.Organize(events);
 
-            var value = MostMinutesAsleepStrategy.StrategyValue(organizedEvents);
+            var value = new MostMinutesAsleepStrategy().StrategyValue(organizedEvents);
 
             Console.WriteLine($"Day 04 - Puzzle 1: {value}");
+        }
+
+        static void Puzzle2()
+        {
+            var input = File.ReadAllLines("input.txt");
+
+            var events = EventParser.ParseInput(input);
+
+            var organizedEvents = EventOrganizer.Organize(events);
+
+            var value = new MostFrequentMinuteAsleepStrategy().StrategyValue(organizedEvents);
+
+            Console.WriteLine($"Day 04 - Puzzle 2: {value}");
         }
     }
 }

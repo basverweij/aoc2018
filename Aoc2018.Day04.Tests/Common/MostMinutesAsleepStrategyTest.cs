@@ -7,6 +7,8 @@ namespace Aoc2018.Day04.Tests.Common
 {
     public class MostMinutesAsleepStrategyTest
     {
+        private readonly MostMinutesAsleepStrategy _sut = new MostMinutesAsleepStrategy();
+
         [Fact]
         public void TotalMinutesAsleepIsCorrect()
         {
@@ -19,12 +21,12 @@ namespace Aoc2018.Day04.Tests.Common
             var guard10Events = organizedEvents
                 .Where(e => e.GuardId == 10);
 
-            Assert.Equal(50, MostMinutesAsleepStrategy.TotalMinutesAsleep(guard10Events));
+            Assert.Equal(50, _sut.TotalMinutesAsleep(guard10Events));
 
             var guard99Events = organizedEvents
                 .Where(e => e.GuardId == 99);
 
-            Assert.Equal(30, MostMinutesAsleepStrategy.TotalMinutesAsleep(guard99Events));
+            Assert.Equal(30, _sut.TotalMinutesAsleep(guard99Events));
         }
 
         [Fact]
@@ -36,7 +38,7 @@ namespace Aoc2018.Day04.Tests.Common
 
             var organizedEvents = EventOrganizer.Organize(events);
 
-            Assert.Equal(10, MostMinutesAsleepStrategy.SelectGuard(organizedEvents));
+            Assert.Equal(10, _sut.SelectGuard(organizedEvents));
         }
 
         [Fact]
@@ -51,12 +53,12 @@ namespace Aoc2018.Day04.Tests.Common
             var guard10Events = organizedEvents
                 .Where(e => e.GuardId == 10);
 
-            Assert.Equal(24, MostMinutesAsleepStrategy.SelectMinute(guard10Events));
+            Assert.Equal(24, _sut.SelectMinute(guard10Events));
 
             var guard99Events = organizedEvents
                 .Where(e => e.GuardId == 99);
 
-            Assert.Equal(45, MostMinutesAsleepStrategy.SelectMinute(guard99Events));
+            Assert.Equal(45, _sut.SelectMinute(guard99Events));
         }
 
         [Fact]
@@ -68,7 +70,7 @@ namespace Aoc2018.Day04.Tests.Common
 
             var organizedEvents = EventOrganizer.Organize(events);
 
-            Assert.Equal(240, MostMinutesAsleepStrategy.StrategyValue(organizedEvents));
+            Assert.Equal(240, _sut.StrategyValue(organizedEvents));
         }
     }
 }
