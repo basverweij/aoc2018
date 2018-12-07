@@ -6,7 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="input.txt">
+    <ProjectReference Include="..\Aoc2018.Core\Aoc2018.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="input-2018-04.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

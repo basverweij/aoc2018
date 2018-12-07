@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Aoc2018.Day01\Aoc2018.Day01.csproj" />
+    <ProjectReference Include="..\Aoc2018.Day02\Aoc2018.Day02.csproj" />
+    <ProjectReference Include="..\Aoc2018.Day03\Aoc2018.Day03.csproj" />
+    <ProjectReference Include="..\Aoc2018.Day04\Aoc2018.Day04.csproj" />
+    <ProjectReference Include="..\Aoc2018.Day05\Aoc2018.Day05.csproj" />
+  </ItemGroup>
+
+</Project>
