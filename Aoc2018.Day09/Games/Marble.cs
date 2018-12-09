@@ -2,13 +2,13 @@
 {
     public class Marble
     {
-        public int Value { get; set; }
+        public long Value { get; set; }
 
         public Marble Next { get; set; }
 
         public Marble Previous { get; set; }
 
-        public Marble(int value)
+        public Marble(long value)
         {
             Value = value;
         }

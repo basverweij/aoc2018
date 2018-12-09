@@ -4,15 +4,15 @@ namespace Aoc2018.Day09.Games
 {
     public static class Game
     {
-        public static int HighestScore(int playerCount, int lastMarble)
+        public static long HighestScore(int playerCount, long lastMarble)
         {
-            var scores = new int[playerCount];
+            var scores = new long[playerCount];
 
             var circle = new Circle();
 
             var player = 0;
 
-            for (var marble = 1; marble <= lastMarble; marble++, player = (player + 1) % playerCount)
+            for (var marble = 1L; marble <= lastMarble; marble++, player = (player + 1) % playerCount)
             {
                 if (marble % 23 == 0)
                 {
