@@ -53,5 +53,25 @@ namespace Aoc2018.Day06.Areas
 
             return maxSize;
         }
+
+        public static int AreaLessThanMaxDistance(Area area, int maxDistance)
+        {
+            var size = 0;
+
+            for (var x = 0; x < area.Width; x++)
+            {
+                for (var y = 0; y < area.Height; y++)
+                {
+                    var c = area.GetCell(x, y);
+
+                    if (c.Distance < maxDistance)
+                    {
+                        size++;
+                    }
+                }
+            }
+
+            return size;
+        }
     }
 }

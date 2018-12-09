@@ -1,4 +1,5 @@
 ﻿using Aoc2018.Day06.Coordinates;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,7 +7,7 @@ namespace Aoc2018.Day06.Areas
 {
     public static class AreaFiller
     {
-        public static Area Fill(IEnumerable<Coordinate> coordinates)
+        public static Area Fill(IEnumerable<Coordinate> coordinates, Action<Area, Coordinate> filler)
         {
             // normalize all coordinates to (0,0)
             var minX = coordinates.Min(c => c.X);
@@ -24,13 +25,13 @@ namespace Aoc2018.Day06.Areas
             // fill the area for each of the coordinates
             foreach (var c in normalizedCoordinates)
             {
-                FillForCoordinate(area, c);
+                filler(area, c);
             }
 
             return area;
         }
 
-        private static void FillForCoordinate(Area area, Coordinate coordinate)
+        public static void FillForCoordinate(Area area, Coordinate coordinate)
         {
             for (var y = 0; y < area.Height; y++)
             {
@@ -65,6 +66,31 @@ namespace Aoc2018.Day06.Areas
                     // this coordinate is closer -> update cell
                     cell.Coordinate = coordinate.Id;
                     cell.Distance = cellDistance;
+                }
+            }
+        }
+
+        public static void SumForCoordinate(Area area, Coordinate coordinate)
+        {
+            for (var y = 0; y < area.Height; y++)
+            {
+                var rowDistance = Abs(coordinate.Y, y);
+
+                for (var x = 0; x < area.Width; x++)
+                {
+                    var cellDistance = rowDistance + Abs(coordinate.X, x);
+
+                    var cell = area.GetCell(x, y);
+                    if (cell == null)
+                    {
+                        // not filled yet
+                        area.SetCell(x, y, -1, cellDistance);
+
+                        continue;
+                    }
+
+                    // add this coordinate's distance
+                    cell.Distance += cellDistance;
                 }
             }
         }

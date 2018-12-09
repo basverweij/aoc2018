@@ -11,6 +11,8 @@ namespace Aoc2018.Day06
         static void Main(string[] args)
         {
             Puzzle1();
+
+            Puzzle2();
         }
 
         [Puzzle]
@@ -20,11 +22,25 @@ namespace Aoc2018.Day06
 
             var coordinates = InputParser.Parse(input);
 
-            var area = AreaFiller.Fill(coordinates);
+            var area = AreaFiller.Fill(coordinates, AreaFiller.FillForCoordinate);
 
             var maxSize = AreaAnalyzer.LargestFiniteArea(area);
 
             Console.WriteLine($"Day 06 - Puzzle 1: {maxSize}");
+        }
+
+        [Puzzle]
+        private static void Puzzle2()
+        {
+            var input = File.ReadAllLines("input-2018-06.txt");
+
+            var coordinates = InputParser.Parse(input);
+
+            var area = AreaFiller.Fill(coordinates, AreaFiller.SumForCoordinate);
+
+            var size = AreaAnalyzer.AreaLessThanMaxDistance(area, 10000);
+
+            Console.WriteLine($"Day 06 - Puzzle 2: {size}");
         }
     }
 }

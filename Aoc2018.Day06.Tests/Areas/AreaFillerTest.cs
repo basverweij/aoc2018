@@ -16,7 +16,7 @@ namespace Aoc2018.Day06.Tests.Areas
         }
 
         [Fact]
-        public void FillsArea()
+        public void FillForCoordinate()
         {
             var coordinates = new Coordinate[]
             {
@@ -28,7 +28,7 @@ namespace Aoc2018.Day06.Tests.Areas
                 new Coordinate(5, 8, 9),
             };
 
-            var area = AreaFiller.Fill(coordinates);
+            var area = AreaFiller.Fill(coordinates, AreaFiller.FillForCoordinate);
 
             Assert.Equal(8, area.Width);
 
@@ -64,6 +64,49 @@ namespace Aoc2018.Day06.Tests.Areas
                 }
 
                 _output.WriteLine(sb1.ToString() + " | " + sb2.ToString());
+            }
+        }
+
+        [Fact]
+        public void SumForCoordinate()
+        {
+            var coordinates = new Coordinate[]
+            {
+                new Coordinate(0, 1, 1),
+                new Coordinate(1, 1, 6),
+                new Coordinate(2, 8, 3),
+                new Coordinate(3, 3, 4),
+                new Coordinate(4, 5, 5),
+                new Coordinate(5, 8, 9),
+            };
+
+            var area = AreaFiller.Fill(coordinates, AreaFiller.SumForCoordinate);
+
+            Assert.Equal(8, area.Width);
+
+            Assert.Equal(9, area.Height);
+
+            for (var y = 0; y < area.Height; y++)
+            {
+                var sb = new StringBuilder();
+
+                for (var x = 0; x < area.Width; x++)
+                {
+                    var c = area.GetCell(x, y);
+
+                    Assert.NotNull(c);
+
+                    if (c.Distance < 32)
+                    {
+                        sb.Append('#');
+                    }
+                    else
+                    {
+                        sb.Append('.');
+                    }
+                }
+
+                _output.WriteLine(sb.ToString());
             }
         }
     }
