@@ -6,42 +6,67 @@ namespace Aoc2018.Day05.Common
     {
         public static string React(string polymer)
         {
-            var lastLength = -1;
-
-            while (lastLength != polymer.Length)
-            {
-                lastLength = polymer.Length;
-                polymer = Reduce(polymer);
-            }
-
-            return polymer;
+            return Reduce(polymer);
         }
 
         public static string Reduce(string polymer)
         {
-            var result = new StringBuilder();
-
             var units = polymer.ToCharArray();
 
-            var pos = 0;
+            var first = new Unit(units[0], null);
 
-            for (var i = 0; i < polymer.Length - 1; i++)
+            var current = first;
+
+            for (var i = 1; i < units.Length; i++)
             {
-                if (Triggered(units[i], units[i + 1]))
-                {
-                    if (i > pos)
-                    {
-                        result.Append(polymer.Substring(pos, i - pos));
-                    }
-
-                    pos = i + 2;
-                    i = i + 1;
-                }
+                current = new Unit(units[i], current);
             }
 
-            if (polymer.Length > pos)
+            current = first;
+
+            while (current?.Next != null)
             {
-                result.Append(polymer.Substring(pos, polymer.Length - pos));
+                if (!Triggered(current.Char, current.Next.Char))
+                {
+                    // no reaction: move to the next unit
+                    current = current.Next;
+
+                    continue;
+                }
+
+                if (current == first)
+                {
+                    // move the first unit after the two reacting units
+                    first = current.Next.Next;
+
+                    if (first != null)
+                    {
+                        first.Previous = null;
+                    }
+
+                    // update current to the new first unit
+                    current = first;
+
+                    continue;
+                }
+
+                // remove the current and next units
+                current.Previous.Next = current.Next.Next;
+
+                if (current.Next.Next != null)
+                {
+                    current.Next.Next.Previous = current.Previous;
+                }
+
+                // set current to the previous unit
+                current = current.Previous;
+            }
+
+            var result = new StringBuilder();
+
+            for (current = first; current != null; current = current.Next)
+            {
+                result.Append(current.Char);
             }
 
             return result.ToString();
