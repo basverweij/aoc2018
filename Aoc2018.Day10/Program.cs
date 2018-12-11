@@ -1,5 +1,4 @@
-﻿using Aoc2018.Core.Puzzles;
-using Aoc2018.Day10.Common;
+﻿using Aoc2018.Day10.Common;
 using Aoc2018.Day10.Points;
 using System;
 using System.IO;
@@ -13,7 +12,7 @@ namespace Aoc2018.Day10
             Puzzle1();
         }
 
-        [Puzzle]
+        //[Puzzle]
         static void Puzzle1()
         {
             var input = File.ReadAllLines("input-2018-10.txt");
