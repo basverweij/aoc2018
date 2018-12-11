@@ -18,9 +18,9 @@ namespace Aoc2018.Day11
 
             grid.Fill(9798);
 
-            var (x, y, _) = grid.FindLargestTotalPower();
+            var (x, y, size, _) = grid.FindLargestTotalPower();
 
-            Console.WriteLine($"Day 11 - Puzzle 1: {x},{y}");
+            Console.WriteLine($"Day 11 - Puzzle 2: {x},{y},{size}");
         }
     }
 }

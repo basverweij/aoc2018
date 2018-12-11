@@ -27,27 +27,47 @@
             }
         }
 
-        public (int, int, int) FindLargestTotalPower()
+        public (int, int, int, int) FindLargestTotalPower()
         {
-            var max = (x: 0, y: 0, totalPower: int.MinValue);
+            var max = (x: 0, y: 0, size: 0, totalPower: int.MinValue);
 
-            for (var y = 0; y < _height - 2; y++)
+            for (var size = 300; size > 0; size--)
             {
-                for (var x = 0; x < _width - 2; x++)
+                if (max.totalPower > 4 * size * size)
                 {
-                    var totalPower =
-                        _cells[x, y] + _cells[x + 1, y] + _cells[x + 2, y] +
-                        _cells[x, y + 1] + _cells[x + 1, y + 1] + _cells[x + 2, y + 1] +
-                        _cells[x, y + 2] + _cells[x + 1, y + 2] + _cells[x + 2, y + 2];
+                    break;
+                }
 
-                    if (totalPower > max.totalPower)
+                for (var y = 0; y < _height - (size - 1); y++)
+                {
+                    for (var x = 0; x < _width - (size - 1); x++)
                     {
-                        max = (x + 1, y + 1, totalPower);
+                        var totalPower = TotalPower(x, y, size);
+
+                        if (totalPower > max.totalPower)
+                        {
+                            max = (x + 1, y + 1, size, totalPower);
+                        }
                     }
                 }
             }
 
             return max;
+        }
+
+        private int TotalPower(int x, int y, int size)
+        {
+            var totalPower = 0;
+
+            for (var j = y; j < y + size; j++)
+            {
+                for (var i = x; i < x + size; i++)
+                {
+                    totalPower += _cells[i, j];
+                }
+            }
+
+            return totalPower;
         }
     }
 }

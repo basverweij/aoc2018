@@ -14,9 +14,9 @@ namespace Aoc2018.Day11.Tests.Cells
         }
 
         [Theory]
-        [InlineData(18, 33, 45, 29)]
-        [InlineData(42, 21, 61, 30)]
-        void FindsLargestTotalPower(int gridSerialNumber, int expectedX, int expectedY, int expectedTotalPower)
+        [InlineData(18, 90, 269, 16, 113)]
+        [InlineData(42, 232, 251, 12, 119)]
+        void FindsLargestTotalPower(int gridSerialNumber, int expectedX, int expectedY, int expectedSize, int expectedTotalPower)
         {
             var sut = new Grid(300, 300);
 
@@ -24,7 +24,7 @@ namespace Aoc2018.Day11.Tests.Cells
 
             var largest = sut.FindLargestTotalPower();
 
-            Assert.Equal((expectedX, expectedY, expectedTotalPower), largest);
+            Assert.Equal((expectedX, expectedY, expectedSize, expectedTotalPower), largest);
         }
     }
 }
