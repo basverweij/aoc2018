@@ -4,7 +4,7 @@ namespace Aoc2018.Day12.Common
 {
     public static class PotsUtil
     {
-        public static Pots Normalize(int offset, string hasPlant)
+        public static Pots Normalize(long offset, string hasPlant)
         {
             var firstPlant = hasPlant.IndexOf('#');
 

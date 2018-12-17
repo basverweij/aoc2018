@@ -10,8 +10,8 @@ namespace Aoc2018.Day12.Tests.Plants
         {
             var pots = new Pots(-3, ".#....##....#####...#######....#.#..##.");
 
-            Assert.Equal("...#.", pots.GetSection(0));
-            Assert.Equal("##...", pots.GetSection(38));
+            Assert.Equal(2, pots.GetSectionMask(0));
+            Assert.Equal(24, pots.GetSectionMask(38));
         }
 
         [Fact]

@@ -15,7 +15,7 @@ namespace Aoc2018.Day12.Common
             }
         }
 
-        private static readonly Regex _inputFormat = new Regex(@"^(?<Mask>[.#]{5}) => (?<ProducesNext>[.#]{1})$");
+        private static readonly Regex _inputFormat = new Regex(@"^(?<Section>[.#]{5}) => (?<ProducesNext>[.#]{1})$");
 
         private static Combination ParseLine(string line)
         {
@@ -26,7 +26,7 @@ namespace Aoc2018.Day12.Common
             }
 
             var mask = m
-                .Groups[nameof(Combination.Mask)]
+                .Groups[nameof(Combination.Section)]
                 .Value;
 
             var producesNext = m

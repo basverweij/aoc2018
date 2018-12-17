@@ -12,6 +12,8 @@ namespace Aoc2018.Day12
         static void Main(string[] args)
         {
             Puzzle1();
+
+            Puzzle2();
         }
 
         [Puzzle]
@@ -30,6 +32,24 @@ namespace Aoc2018.Day12
             var sum = pots.GetSumOfPotNumbers();
 
             Console.WriteLine($"Day 12 - Puzzle 1: {sum}");
+        }
+
+        [Puzzle]
+        static void Puzzle2()
+        {
+            var input = File.ReadAllLines("input-2018-12.txt");
+
+            var initialState = input.First().Replace("initial state: ", "");
+
+            var combinations = InputParser.Parse(input.Skip(2));
+
+            var grower = new Grower(combinations);
+
+            var pots = grower.Grow(initialState, 50_000_000_000);
+
+            var sum = pots.GetSumOfPotNumbers();
+
+            Console.WriteLine($"Day 12 - Puzzle 2: {sum}");
         }
     }
 }
