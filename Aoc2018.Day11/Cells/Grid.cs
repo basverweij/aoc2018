@@ -1,46 +1,30 @@
-﻿namespace Aoc2018.Day11.Cells
+﻿using Aoc2018.Day11.Tables;
+
+namespace Aoc2018.Day11.Cells
 {
     public class Grid
     {
-        private readonly int _width;
-
-        private readonly int _height;
-
-        private int[,] _cells;
+        private readonly SummedAreaTable _cells;
 
         public Grid(int width, int height)
         {
-            _width = width;
-            _height = height;
+            _cells = new SummedAreaTable(width, height);
         }
 
         public void Fill(int gridSerialNumber)
         {
-            _cells = new int[_width, _height];
-
-            for (var y = 0; y < _height; y++)
-            {
-                for (var x = 0; x < _width; x++)
-                {
-                    _cells[x, y] = FuelCellAnalyzer.PowerLevel(gridSerialNumber, x + 1, y + 1);
-                }
-            }
+            _cells.Fill((x, y) => FuelCellAnalyzer.PowerLevel(gridSerialNumber, x + 1, y + 1));
         }
 
-        public (int, int, int, int) FindLargestTotalPower()
+        public (int, int, int, int) FindLargestTotalPower(int fromSize, int toSize)
         {
             var max = (x: 0, y: 0, size: 0, totalPower: int.MinValue);
 
-            for (var size = 300; size > 0; size--)
+            for (var size = fromSize; size <= toSize; size++)
             {
-                if (max.totalPower > 4 * size * size)
+                for (var x = 0; x < _cells.Width - (size - 1); x++)
                 {
-                    break;
-                }
-
-                for (var y = 0; y < _height - (size - 1); y++)
-                {
-                    for (var x = 0; x < _width - (size - 1); x++)
+                    for (var y = 0; y < _cells.Height - (size - 1); y++)
                     {
                         var totalPower = TotalPower(x, y, size);
 
@@ -57,17 +41,7 @@
 
         private int TotalPower(int x, int y, int size)
         {
-            var totalPower = 0;
-
-            for (var j = y; j < y + size; j++)
-            {
-                for (var i = x; i < x + size; i++)
-                {
-                    totalPower += _cells[i, j];
-                }
-            }
-
-            return totalPower;
+            return _cells.GetAreaSum(x, y, x + size - 1, y + size - 1);
         }
     }
 }
