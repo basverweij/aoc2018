@@ -1,0 +1,28 @@
+﻿using Aoc2018.Core.Puzzles;
+using Aoc2018.Day14.Recipes;
+using System;
+
+namespace Aoc2018.Day14
+{
+    static class Program
+    {
+        static void Main(string[] args)
+        {
+            Puzzle1();
+        }
+
+        [Puzzle]
+        static void Puzzle1()
+        {
+            var num = 793031;
+
+            var sut = new Kitchen();
+
+            while (sut.Cook() < num + 10) { }
+
+            var result = sut.Recipes(num, 10);
+
+            Console.WriteLine($"Day 14 - Puzzle 1: {result}");
+        }
+    }
+}
