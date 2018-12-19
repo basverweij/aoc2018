@@ -15,6 +15,11 @@ namespace Aoc2018.Day13.Tracks
             Location = location;
             Direction = direction;
         }
+
+        public override string ToString()
+        {
+            return $"@{Location} {Direction}";
+        }
     }
 
     public enum Directions

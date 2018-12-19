@@ -6,6 +6,8 @@ namespace Aoc2018.Day13.Tracks
 {
     public class Track
     {
+        public CartCollisionResolutions CartCollisionResolution { get; set; } = CartCollisionResolutions.ThrowException;
+
         private readonly int _width;
 
         private readonly int _height;
@@ -70,21 +72,46 @@ namespace Aoc2018.Day13.Tracks
                 .ThenBy(c => c.Location.X)
                 .ToArray();
 
+            //var collidedCarts = new HashSet<Location>();
+
             foreach (var cart in carts)
             {
-                _carts.Remove(cart.Location);
+                if (!_carts.Remove(cart.Location))
+                {
+                    // cart collided during this tick
+                    continue;
+                }
 
                 _sections[cart.Location.X, cart.Location.Y].ExitSection(cart);
 
                 if (_carts.ContainsKey(cart.Location))
                 {
-                    throw new CartCollisionException(cart.Location);
+                    switch (CartCollisionResolution)
+                    {
+                        case CartCollisionResolutions.ThrowException:
+                            throw new CartCollisionException(cart.Location);
+
+                        case CartCollisionResolutions.RemoveCarts:
+                            _carts.Remove(cart.Location);
+                            continue;
+                    }
                 }
 
                 _sections[cart.Location.X, cart.Location.Y].EnterSection(cart);
 
                 _carts.Add(cart.Location, cart);
             }
+
+            if (_carts.Count == 1)
+            {
+                throw new OneCartRemainingException(_carts.Keys.First());
+            }
         }
+    }
+
+    public enum CartCollisionResolutions
+    {
+        ThrowException,
+        RemoveCarts,
     }
 }

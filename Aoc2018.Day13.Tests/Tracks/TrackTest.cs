@@ -72,5 +72,40 @@ namespace Aoc2018.Day13.Tests.Tracks
                 Assert.Equal(new Location(7, 3), ccex.Location);
             }
         }
+
+        [Fact]
+        public void TicksWithRemovingCarts()
+        {
+            var input = new string[]
+            {
+                "/>-<\\  ",
+                "|   |  ",
+                "| /<+-\\",
+                "| | | v",
+                "\\>+</ |",
+                "  |   ^",
+                "  \\<->/",
+            };
+
+            var sut = InputParser.Parse(input);
+
+            sut.CartCollisionResolution = CartCollisionResolutions.RemoveCarts;
+
+            try
+            {
+                while (true)
+                {
+                    _output.WriteLine(sut.ToString());
+
+                    sut.Tick();
+                }
+            }
+            catch (OneCartRemainingException ocrex)
+            {
+                _output.WriteLine(sut.ToString());
+
+                Assert.Equal(new Location(6, 4), ocrex.Location);
+            }
+        }
     }
 }

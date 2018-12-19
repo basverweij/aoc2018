@@ -27,5 +27,10 @@ namespace Aoc2018.Day13.Tracks
         {
             return HashCode.Combine(X, Y);
         }
+
+        public override string ToString()
+        {
+            return $"({X},{Y})";
+        }
     }
 }
