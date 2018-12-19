@@ -44,5 +44,34 @@ namespace Aoc2018.Day14.Recipes
         {
             return string.Join("", _recipes.Skip(from).Take(count));
         }
+
+        public int NumRecipesBeforeEndsWith(int[] scores)
+        {
+            var num = NumRecipesBeforeEndsWith(scores, 1);
+            if (num >= 0)
+            {
+                return num;
+            }
+
+            return NumRecipesBeforeEndsWith(scores, 0);
+        }
+
+        private int NumRecipesBeforeEndsWith(int[] scores, int offset)
+        {
+            if (_recipes.Count - offset < scores.Length)
+            {
+                return -1;
+            }
+
+            for (int i = scores.Length - 1, j = _recipes.Count - offset - 1; i >= 0; i--, j--)
+            {
+                if (scores[i] != _recipes[j])
+                {
+                    return -1;
+                }
+            }
+
+            return _recipes.Count - scores.Length - offset;
+        }
     }
 }
