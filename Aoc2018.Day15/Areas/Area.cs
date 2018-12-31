@@ -1,4 +1,5 @@
 ﻿using Aoc2018.Day15.Units;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,6 +34,11 @@ namespace Aoc2018.Day15.Areas
 
         public void MoveUnit(Unit unit, Location to)
         {
+            if (GetUnit(to.X, to.Y) != null)
+            {
+                throw new ArgumentException($"new locations already contains a unit: {to}", nameof(to));
+            }
+
             _units[unit.Location.X, unit.Location.Y] = null;
 
             unit.Location = to;
@@ -40,7 +46,18 @@ namespace Aoc2018.Day15.Areas
             _units[unit.Location.X, unit.Location.Y] = unit;
         }
 
-        public Unit GetUnit(int x, int y) => _units[x, y];
+        public Unit GetUnit(int x, int y)
+        {
+            var unit = _units[x, y];
+
+            if ((unit == null) ||
+                !unit.IsAlive)
+            {
+                return null;
+            }
+
+            return unit;
+        }
 
         public IEnumerable<Unit> GetUnits()
         {
@@ -48,7 +65,7 @@ namespace Aoc2018.Day15.Areas
                 .Range(0, Height)
                 .SelectMany(y => Enumerable
                     .Range(0, Width)
-                    .Select(x => _units[x, y])
+                    .Select(x => GetUnit(x, y))
                     .Where(u => u != null));
         }
 
@@ -64,7 +81,7 @@ namespace Aoc2018.Day15.Areas
                 {
                     row[x] = _walls[x, y] ?
                         '#' :
-                        (_units[x, y]?.UnitType.ToString()[0] ?? '.');
+                        (GetUnit(x, y)?.UnitType.ToString()[0] ?? '.');
                 }
 
                 sb.AppendLine(new string(row));

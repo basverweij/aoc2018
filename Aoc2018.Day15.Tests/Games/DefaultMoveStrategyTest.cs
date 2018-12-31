@@ -84,7 +84,7 @@ namespace Aoc2018.Day15.Tests.Games
             _output.WriteLine("Initially:");
             _output.WriteLine(game.Area.ToString());
 
-            game.Turn();
+            Assert.True(game.Turn());
 
             _output.WriteLine("After 1 round:");
             _output.WriteLine(game.Area.ToString());
@@ -106,6 +106,52 @@ namespace Aoc2018.Day15.Tests.Games
                 Environment.NewLine;
 
             Assert.Equal(round1, game.Area.ToString());
+
+            Assert.True(game.Turn());
+
+            _output.WriteLine("After 2 rounds:");
+            _output.WriteLine(game.Area.ToString());
+
+            var round2 = string.Join(
+                Environment.NewLine,
+                new string[]
+                {
+                    "#########",
+                    "#..G.G..#",
+                    "#...G...#",
+                    "#.G.E.G.#",
+                    "#.......#",
+                    "#G..G..G#",
+                    "#.......#",
+                    "#.......#",
+                    "#########",
+                }) +
+                Environment.NewLine;
+
+            Assert.Equal(round2, game.Area.ToString());
+
+            Assert.True(game.Turn());
+
+            _output.WriteLine("After 3 rounds:");
+            _output.WriteLine(game.Area.ToString());
+
+            var round3 = string.Join(
+                Environment.NewLine,
+                new string[]
+                {
+                    "#########",
+                    "#.......#",
+                    "#..GGG..#",
+                    "#..GEG..#",
+                    "#G..G...#",
+                    "#......G#",
+                    "#.......#",
+                    "#.......#",
+                    "#########",
+                }) +
+                Environment.NewLine;
+
+            Assert.Equal(round3, game.Area.ToString());
         }
     }
 }

@@ -17,6 +17,8 @@ namespace Aoc2018.Day15.Games
 
         private readonly Unit[] _units;
 
+        private int _round = 0;
+
         public Game(Area area, IMoveStrategy moveStrategy, IAttackStrategy attackStrategy)
         {
             Area = area ?? throw new ArgumentNullException(nameof(area));
@@ -28,6 +30,12 @@ namespace Aoc2018.Day15.Games
                 .GetUnits()
                 .ToArray();
         }
+
+        public int Score =>
+            _round *
+            _units
+                .Where(u => u.IsAlive)
+                .Sum(u => u.HitPoints);
 
         /// <summary>
         /// Returns false if the combat has ended (i.e. no targets remained for one of the units).
@@ -42,15 +50,12 @@ namespace Aoc2018.Day15.Games
                 .ToArray();
 
             // save current locations as these could be changed during the turn
-            var targetsByType = units
-                .GroupBy(u => u.UnitType)
+            var targetsForType = Enum
+                .GetValues(typeof(UnitTypes))
+                .Cast<UnitTypes>()
                 .ToDictionary(
-                    g => g.Key,
-                    g => g.Select(u => u.Location).ToArray());
-
-            var currentLocations = units
-                .Select(u => u.Location)
-                .ToHashSet();
+                    t => t,
+                    t => units.Where(u => u.UnitType != t));
 
             for (var i = 0; i < units.Length; i++)
             {
@@ -61,9 +66,9 @@ namespace Aoc2018.Day15.Games
                 }
 
                 // get move targets
-                var moveTargets = targetsByType
-                    .Where(t => t.Key != units[i].UnitType)
-                    .SelectMany(t => t.Value);
+                var moveTargets = targetsForType[units[i].UnitType]
+                    .Where(u => u.IsAlive)
+                    .Select(u => u.Location);
 
                 if (!moveTargets.Any())
                 {
@@ -71,7 +76,7 @@ namespace Aoc2018.Day15.Games
                 }
 
                 // unit moves
-                var newLocation = MoveStrategy.Move(units[i], Area, moveTargets, currentLocations);
+                var newLocation = MoveStrategy.Move(units[i], Area, moveTargets);
 
                 if (newLocation.HasValue)
                 {
@@ -91,6 +96,8 @@ namespace Aoc2018.Day15.Games
                 }
             }
 
+            _round++;
+
             return true;
         }
 
@@ -107,7 +114,7 @@ namespace Aoc2018.Day15.Games
         /// <summary>
         /// Returns the new location for the unit, or null if the unit should not move.
         /// </summary>
-        Location? Move(Unit unit, Area area, IEnumerable<Location> targets, HashSet<Location> currentLocations);
+        Location? Move(Unit unit, Area area, IEnumerable<Location> targets);
     }
 
     public interface IAttackStrategy
@@ -119,7 +126,7 @@ namespace Aoc2018.Day15.Games
     public class NullMoveStrategy :
         IMoveStrategy
     {
-        public Location? Move(Unit unit, Area area, IEnumerable<Location> targets, HashSet<Location> moveFriends)
+        public Location? Move(Unit unit, Area area, IEnumerable<Location> targets)
         {
             // do nothing
             return null;

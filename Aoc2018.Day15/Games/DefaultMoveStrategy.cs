@@ -1,4 +1,5 @@
 ﻿using Aoc2018.Day15.Areas;
+using Aoc2018.Day15.Common;
 using Aoc2018.Day15.Units;
 using System;
 using System.Collections.Generic;
@@ -9,20 +10,27 @@ namespace Aoc2018.Day15.Games
     public class DefaultMoveStrategy :
         IMoveStrategy
     {
-        public Location? Move(Unit unit, Area area, IEnumerable<Location> targets, HashSet<Location> currentLocations)
+        public Location? Move(Unit unit, Area area, IEnumerable<Location> targets)
         {
+            if (targets
+                .Intersect(UnitsUtil.LocationsInRange(unit.Location, area.Width, area.Height))
+                .Any())
+            {
+                // don't move if already adjacent to a target
+                return null;
+            }
+
             var inRangeLocations = targets
-                .SelectMany(LocationsInRange)
+                .SelectMany(l => UnitsUtil.LocationsInRange(l, area.Width, area.Height))
                 .Distinct()
-                .Where(l => l.X >= 0 && l.Y >= 0 && l.X < area.Width && l.Y < area.Height) // valid location
                 .Where(l => !area.IsWall(l.X, l.Y)) // not a wall
-                .Where(l => !currentLocations.Contains(l)) // not a unit
+                .Where(l => area.GetUnit(l.X, l.Y) == null) // not a unit
                 .ToArray();
 
             // flood fill area to determine path distances
             var pathDistances = new int[area.Width, area.Height];
 
-            Fill(area, currentLocations, unit.Location, pathDistances, unit.Location.X, unit.Location.Y, 0);
+            Fill(area, unit.Location, pathDistances, unit.Location.X, unit.Location.Y, 0);
 
             // determine leading target in range location
             var distances = inRangeLocations
@@ -39,8 +47,8 @@ namespace Aoc2018.Day15.Games
             }
             catch (InvalidOperationException)
             {
-                // no targets are reachable
                 return null;
+                //throw new NoTargetsReachableException($"from: {unit}");
             }
 
             var leadingInRangeLocation = inRangeLocations
@@ -52,28 +60,16 @@ namespace Aoc2018.Day15.Games
             // determine leading shortest path
             pathDistances = new int[area.Width, area.Height];
 
-            Fill(area, currentLocations, leadingInRangeLocation, pathDistances, leadingInRangeLocation.X, leadingInRangeLocation.Y, 0);
+            Fill(area, leadingInRangeLocation, pathDistances, leadingInRangeLocation.X, leadingInRangeLocation.Y, 1);
 
-            return LocationsInRange(unit.Location)
-                .Where(l => l.X >= 0 && l.Y >= 0 && l.X < area.Width && l.Y < area.Height) // valid location
-                .Where(l => pathDistances[l.X, l.Y] == minDistance - 1) // shortest paths
+            return UnitsUtil.LocationsInRange(unit.Location, area.Width, area.Height)
+                .Where(l => pathDistances[l.X, l.Y] == minDistance) // shortest paths
                 .OrderBy(l => l.Y) // resolve ties by reading order
                 .ThenBy(l => l.X) // resolve ties by reading order
                 .FirstOrDefault();
         }
 
-        private static IEnumerable<Location> LocationsInRange(Location target)
-        {
-            return new Location[]
-            {
-                new Location(target.X, target.Y-1), // top
-                new Location(target.X-1, target.Y), // left
-                new Location(target.X+1, target.Y), // right
-                new Location(target.X, target.Y+1), // bottom
-            };
-        }
-
-        private static void Fill(Area area, HashSet<Location> currentLocations, Location source, int[,] pathDistances, int x, int y, int distance)
+        private static void Fill(Area area, Location source, int[,] pathDistances, int x, int y, int distance)
         {
             if (area.IsWall(x, y))
             {
@@ -81,13 +77,13 @@ namespace Aoc2018.Day15.Games
                 return;
             }
 
-            var location = new Location(x, y);
+            var unit = area.GetUnit(x, y);
 
-            if (currentLocations.Contains(location))
+            if (unit != null)
             {
                 pathDistances[x, y] = int.MaxValue;
 
-                if (!location.Equals(source))
+                if (!unit.Location.Equals(source))
                 {
                     return;
                 }
@@ -108,25 +104,25 @@ namespace Aoc2018.Day15.Games
             if (x > 0)
             {
                 // fill left
-                Fill(area, currentLocations, source, pathDistances, x - 1, y, distance + 1);
+                Fill(area, source, pathDistances, x - 1, y, distance + 1);
             }
 
             if (x < area.Width - 1)
             {
                 // fill right
-                Fill(area, currentLocations, source, pathDistances, x + 1, y, distance + 1);
+                Fill(area, source, pathDistances, x + 1, y, distance + 1);
             }
 
             if (y > 0)
             {
                 // fill top
-                Fill(area, currentLocations, source, pathDistances, x, y - 1, distance + 1);
+                Fill(area, source, pathDistances, x, y - 1, distance + 1);
             }
 
             if (y < area.Height - 1)
             {
                 // fill bottom
-                Fill(area, currentLocations, source, pathDistances, x, y + 1, distance + 1);
+                Fill(area, source, pathDistances, x, y + 1, distance + 1);
             }
         }
     }
