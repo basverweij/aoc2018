@@ -10,7 +10,8 @@ namespace Aoc2018.Day16.Machines
 
         public Machine(params int[] registers)
         {
-            if (registers != null)
+            if (registers != null &&
+                registers.Any())
             {
                 Array.Copy(registers, Registers, Registers.Length);
             }
@@ -25,6 +26,11 @@ namespace Aoc2018.Day16.Machines
         public override int GetHashCode()
         {
             return HashCode.Combine(Registers);
+        }
+
+        public override string ToString()
+        {
+            return $"[{Registers[0]}, {Registers[1]}, {Registers[2]}, {Registers[3]}]";
         }
 
         public void Execute(Opcodes opcode, int a, int b, int c)

@@ -22,6 +22,14 @@ namespace Aoc2018.Day16.Common
             }
         }
 
+        public static IEnumerable<Instruction> ParseInstructions(IEnumerable<string> input)
+        {
+            foreach (var line in input)
+            {
+                yield return ParseInstruction(line);
+            }
+        }
+
         private static Machine ParseMachine(string line)
         {
             var registers = line

@@ -11,6 +11,8 @@ namespace Aoc2018.Day16
         static void Main(string[] args)
         {
             Puzzle1();
+
+            Puzzle2();
         }
 
         [Puzzle]
@@ -27,6 +29,26 @@ namespace Aoc2018.Day16
                 .Count();
 
             Console.WriteLine($"Day 16 - Puzzle 1: {count}");
+        }
+
+        [Puzzle]
+        static void Puzzle2()
+        {
+            var input = File.ReadAllLines("input-2018-16-1.txt");
+
+            var samples = InputParser.ParseSamples(input);
+
+            var opcodeLookup = MachineUtil.BuildOpcodeLookup(samples);
+
+            Console.WriteLine(string.Join(Environment.NewLine, opcodeLookup.OrderBy(l => l.Key).Select(l => $"{l.Key} = {l.Value}")));
+
+            input = File.ReadAllLines("input-2018-16-2.txt");
+
+            var instructions = InputParser.ParseInstructions(input);
+
+            var machine = MachineUtil.ExecuteProgram(instructions, opcodeLookup);
+
+            Console.WriteLine(machine);
         }
     }
 }
