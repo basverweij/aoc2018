@@ -105,5 +105,33 @@ namespace Aoc2018.Day15.Tests.Games
 
             Assert.Equal(score, game.Score);
         }
+
+        [Theory]
+        [InlineData(0, 29, 15, 4988)]
+        [InlineData(2, 33, 4, 31284)]
+        [InlineData(3, 37, 15, 3478)]
+        [InlineData(4, 39, 12, 6474)]
+        [InlineData(5, 30, 34, 1140)]
+        public void AttacksWithIncreasedAttackPower(int index, int completeRounds, int elfAttackPower, int score)
+        {
+            var area = InputParser.Parse(inputs[index], elfAttackPower);
+
+            var game = new Game(area, new DefaultMoveStrategy(), new DefaultAttackStrategy());
+
+            _output.WriteLine($"Initial state:");
+            _output.WriteLine(game.Area.ToString());
+
+            for (var i = 0; i < completeRounds; i++)
+            {
+                Assert.True(game.Turn());
+
+                _output.WriteLine($"After round {i + 1}:");
+                _output.WriteLine(game.Area.ToString());
+            }
+
+            Assert.False(game.Turn());
+
+            Assert.Equal(score, game.Score);
+        }
     }
 }

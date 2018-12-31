@@ -8,7 +8,7 @@ namespace Aoc2018.Day15.Common
 {
     public static class InputParser
     {
-        public static Area Parse(IEnumerable<string> input)
+        public static Area Parse(IEnumerable<string> input, int elfAttackPower = 3)
         {
             var lines = input.ToArray();
 
@@ -28,11 +28,11 @@ namespace Aoc2018.Day15.Common
                             break;
 
                         case 'E':
-                            AddUnit(area, x, y, UnitTypes.Elf);
+                            AddUnit(area, x, y, UnitTypes.Elf, elfAttackPower);
                             break;
 
                         case 'G':
-                            AddUnit(area, x, y, UnitTypes.Goblin);
+                            AddUnit(area, x, y, UnitTypes.Goblin, 3);
                             break;
 
                         default:
@@ -44,9 +44,9 @@ namespace Aoc2018.Day15.Common
             return area;
         }
 
-        private static void AddUnit(Area area, int x, int y, UnitTypes type)
+        private static void AddUnit(Area area, int x, int y, UnitTypes type, int attackPower)
         {
-            var unit = new Unit(type, new Location(x, y), 200, 3);
+            var unit = new Unit(type, new Location(x, y), 200, attackPower);
 
             area.MoveUnit(unit, unit.Location);
         }

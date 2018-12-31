@@ -31,6 +31,8 @@ namespace Aoc2018.Day15.Games
                 .ToArray();
         }
 
+        public IEnumerable<Unit> Units => _units;
+
         public int Score =>
             _round *
             _units
