@@ -24,13 +24,9 @@ namespace Aoc2018.Day15
 
             var game = new Game(area, new DefaultMoveStrategy(), new DefaultAttackStrategy());
 
-            for (var i = 0; i < 1; i++)
-            {
-                if (!game.Turn())
-                {
-                    break;
-                }
-            }
+            while (game.Turn()) ;
+
+            Console.WriteLine(area);
 
             Console.WriteLine($"Day 15 - Puzzle 1: {game.Score}");
         }

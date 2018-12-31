@@ -28,9 +28,7 @@ namespace Aoc2018.Day15.Games
                 .ToArray();
 
             // flood fill area to determine path distances
-            var pathDistances = new int[area.Width, area.Height];
-
-            Fill(area, unit.Location, pathDistances, unit.Location.X, unit.Location.Y, 0);
+            var pathDistances = Fill(area, unit.Location, 0);
 
             // determine leading target in range location
             var distances = inRangeLocations
@@ -58,9 +56,7 @@ namespace Aoc2018.Day15.Games
                 .First();
 
             // determine leading shortest path
-            pathDistances = new int[area.Width, area.Height];
-
-            Fill(area, leadingInRangeLocation, pathDistances, leadingInRangeLocation.X, leadingInRangeLocation.Y, 1);
+            pathDistances = Fill(area, leadingInRangeLocation, 1);
 
             return UnitsUtil.LocationsInRange(unit.Location, area.Width, area.Height)
                 .Where(l => pathDistances[l.X, l.Y] == minDistance) // shortest paths
@@ -69,61 +65,132 @@ namespace Aoc2018.Day15.Games
                 .FirstOrDefault();
         }
 
-        private static void Fill(Area area, Location source, int[,] pathDistances, int x, int y, int distance)
+        struct Node
         {
-            if (area.IsWall(x, y))
+            public readonly Location Location;
+            public readonly int Distance;
+
+            public Node(Location location, int distance)
             {
-                pathDistances[x, y] = int.MaxValue;
-                return;
+                Location = location;
+                Distance = distance;
             }
 
-            var unit = area.GetUnit(x, y);
-
-            if (unit != null)
+            public override bool Equals(object obj)
             {
-                pathDistances[x, y] = int.MaxValue;
-
-                if (!unit.Location.Equals(source))
+                if (!(obj is Node))
                 {
-                    return;
+                    return false;
+                }
+
+                var node = (Node)obj;
+
+                return Distance == node.Distance &&
+                    Location.Equals(node.Location);
+            }
+
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(Location, Distance);
+            }
+        }
+
+        class NodeComparer :
+            IComparer<Node>
+        {
+            public int Compare(Node x, Node y)
+            {
+                if (x.Distance != y.Distance)
+                {
+                    return x.Distance - y.Distance;
+                }
+
+                if (x.Location.Y != y.Location.Y)
+                {
+                    return x.Location.Y - y.Location.Y;
+                }
+
+                return x.Location.X - y.Location.X;
+            }
+        }
+
+        private static int[,] NewPathDistances(Area area)
+        {
+            var d = new int[area.Width, area.Height];
+
+            for (var i = 0; i < area.Width; i++)
+            {
+                for (var j = 0; j < area.Height; j++)
+                {
+                    d[i, j] = int.MinValue;
                 }
             }
 
-            if ((pathDistances[x, y] != int.MaxValue) &&
-                ((pathDistances[x, y] == 0) ||
-                (pathDistances[x, y] > distance)))
+            return d;
+        }
+
+        private static int[,] Fill(Area area, Location source, int distance)
+        {
+            var pathDistances = NewPathDistances(area);
+
+            // mark source node as visited
+            pathDistances[source.X, source.Y] = distance;
+
+            // create node queue
+            var q = new SortedSet<Node>(new NodeComparer());
+
+            // add source node neighbours
+            ProcessNeighbours(area, pathDistances, q, new Node(source, distance));
+
+            // loop while queue is not empty
+            while (q.Count > 0)
             {
-                pathDistances[x, y] = distance;
-            }
-            else if (pathDistances[x, y] < distance)
-            {
-                // cell to fill already has a shorter distance, so no need to fill further
-                return;
+                // get and remove the node with the smallest distance
+                var node = q.Min;
+                q.Remove(node);
+
+                // save the distance for this node
+                pathDistances[node.Location.X, node.Location.Y] = node.Distance;
+
+                // process neighbours
+                ProcessNeighbours(area, pathDistances, q, node);
             }
 
-            if (x > 0)
+            return pathDistances;
+        }
+
+        private static void ProcessNeighbours(Area area, int[,] pathDistances, SortedSet<Node> q, Node node)
+        {
+            foreach (var l in UnitsUtil.LocationsInRange(node.Location, area.Width, area.Height))
             {
-                // fill left
-                Fill(area, source, pathDistances, x - 1, y, distance + 1);
+                if (IsValidNode(area, pathDistances, l))
+                {
+                    q.Add(new Node(l, node.Distance + 1));
+                }
+                else if (pathDistances[l.X, l.Y] == int.MinValue)
+                {
+                    // mark unvisited invalid node as visited
+                    pathDistances[l.X, l.Y] = int.MaxValue;
+                }
+            }
+        }
+
+        private static bool IsValidNode(Area area, int[,] pathDistances, Location location)
+        {
+            if (pathDistances[location.X, location.Y] != int.MinValue)
+            {
+                // already visited
+                return false;
             }
 
-            if (x < area.Width - 1)
+            if (area.IsWall(location.X, location.Y))
             {
-                // fill right
-                Fill(area, source, pathDistances, x + 1, y, distance + 1);
+                // walls can't be visited
+                return false;
             }
 
-            if (y > 0)
-            {
-                // fill top
-                Fill(area, source, pathDistances, x, y - 1, distance + 1);
-            }
-
-            if (y < area.Height - 1)
-            {
-                // fill bottom
-                Fill(area, source, pathDistances, x, y + 1, distance + 1);
-            }
+            // units can't be visited
+            return area.GetUnit(location.X, location.Y) == null;
         }
     }
 }
