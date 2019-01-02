@@ -39,22 +39,26 @@ namespace Aoc2018.Day18.Areas
             {
                 for (var y = 0; y < Height; y++)
                 {
-                    var adjacent = GetAdjancentAcres(x, y).ToArray();
+                    var counts = GetAdjancentAcres(x, y)
+                        .GroupBy(t => t)
+                        .ToDictionary(
+                            g => g.Key,
+                            g => g.Count());
 
                     var acre = _acres[x, y];
 
                     switch (acre)
                     {
                         case LandType.Open:
-                            acres[x, y] = adjacent.Count(a => a == LandType.Trees) >= 3 ? LandType.Trees : acre;
+                            acres[x, y] = counts.ContainsKey(LandType.Trees) && counts[LandType.Trees] >= 3 ? LandType.Trees : acre;
                             break;
 
                         case LandType.Trees:
-                            acres[x, y] = adjacent.Count(a => a == LandType.Lumberyard) >= 3 ? LandType.Lumberyard : acre;
+                            acres[x, y] = counts.ContainsKey(LandType.Lumberyard) && counts[LandType.Lumberyard] >= 3 ? LandType.Lumberyard : acre;
                             break;
 
                         case LandType.Lumberyard:
-                            acres[x, y] = adjacent.Any(a => a == LandType.Lumberyard) && adjacent.Any(a => a == LandType.Trees) ? LandType.Lumberyard : LandType.Open;
+                            acres[x, y] = counts.ContainsKey(LandType.Lumberyard) && counts.ContainsKey(LandType.Trees) ? LandType.Lumberyard : LandType.Open;
                             break;
                     }
                 }
