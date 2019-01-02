@@ -16,5 +16,17 @@ namespace Aoc2018.Day17.Analysis
 
             return scan.WaterCellsCount;
         }
+
+        public static int GetSettledWaterCellsCount(Scan scan)
+        {
+            if (scan.WaterCellsCount > 0)
+            {
+                throw new ArgumentException("scan must not contain any water cells", nameof(scan));
+            }
+
+            scan.AddWater(500);
+
+            return scan.SettledWaterCellsCount;
+        }
     }
 }

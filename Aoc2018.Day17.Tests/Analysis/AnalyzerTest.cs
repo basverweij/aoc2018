@@ -38,5 +38,33 @@ namespace Aoc2018.Day17.Tests.Analysis
 
             Assert.Equal(57, actual);
         }
+
+        [Fact]
+        public void AnalyzesSettledWaterTiles()
+        {
+            var scan = new Scan(
+                new ScanLine[]
+                {
+                    new ScanLine(ScanLineOrientations.Vertical, 495, 2, 7),
+                    new ScanLine(ScanLineOrientations.Horizontal, 7, 495, 501),
+                    new ScanLine(ScanLineOrientations.Vertical, 501, 3, 7),
+                    new ScanLine(ScanLineOrientations.Vertical, 498, 2, 4),
+                    new ScanLine(ScanLineOrientations.Vertical, 506, 1, 2),
+                    new ScanLine(ScanLineOrientations.Vertical, 498, 9, 13),
+                    new ScanLine(ScanLineOrientations.Vertical, 504, 9, 13),
+                    new ScanLine(ScanLineOrientations.Horizontal, 13, 498, 504),
+                    new ScanLine(ScanLineOrientations.Vertical, 500, 10, 11),
+                    new ScanLine(ScanLineOrientations.Vertical, 502, 10, 11),
+                    new ScanLine(ScanLineOrientations.Horizontal, 11, 501, 501),
+                });
+
+            _output.WriteLine(scan.ToString());
+
+            var actual = Analyzer.GetSettledWaterCellsCount(scan);
+
+            _output.WriteLine(scan.ToString());
+
+            Assert.Equal(29, actual);
+        }
     }
 }

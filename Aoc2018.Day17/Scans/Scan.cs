@@ -20,6 +20,10 @@ namespace Aoc2018.Day17.Scans
             .Range(0, _maxY - _minY + 1)
             .Sum(y => Enumerable.Range(0, _maxX - _minX + 1).Sum(x => Cells[y, x].IsWater() ? 1 : 0));
 
+        public int SettledWaterCellsCount => Enumerable
+            .Range(0, _maxY - _minY + 1)
+            .Sum(y => Enumerable.Range(0, _maxX - _minX + 1).Sum(x => Cells[y, x] == CellTypes.SettledWater ? 1 : 0));
+
         public Scan(IEnumerable<ScanLine> scanLines)
         {
             ScanLines = scanLines ?? throw new ArgumentNullException(nameof(scanLines));
@@ -95,35 +99,39 @@ namespace Aoc2018.Day17.Scans
                 }
                 else if (y >= 0 && Cells[y + 1, x].IsClayOrSettled())
                 {
-                    var type = CellTypes.SettledWater;
-
                     // check for left clay border
                     var i = x;
                     while (i > 0 && Cells[y + 1, i - 1].IsClayOrSettled() && !Cells[y, i - 1].IsClay()) { i--; }
-
-                    if (Cells[y, i - 1] != CellTypes.Clay)
-                    {
-                        type = CellTypes.MovingWater;
-
-                        // overflow left
-                        AddWater(i - 1, y - 1);
-                    }
 
                     // check for right clay border
                     var j = x;
                     while (j < _maxX - _minX && Cells[y + 1, j + 1].IsClayOrSettled() && !Cells[y, j + 1].IsClay()) { j++; }
 
-                    if (Cells[y, j + 1] != CellTypes.Clay)
-                    {
-                        type = CellTypes.MovingWater;
+                    var type = Cells[y, i - 1] != CellTypes.Clay || Cells[y, j + 1] != CellTypes.Clay ?
+                        CellTypes.MovingWater :
+                        CellTypes.SettledWater;
 
-                        // overflow left
-                        AddWater(j + 1, y - 1);
+                    for (var k = i; k <= j; k++)
+                    {
+                        Cells[y, k] = type;
+
+                        if (y < _maxY - _minY &&
+                            Cells[y + 1, k] == CellTypes.MovingWater)
+                        {
+                            Cells[y + 1, k] = CellTypes.SettledWater;
+                        }
                     }
 
-                    for (; i <= j; i++)
+                    if (Cells[y, i - 1] != CellTypes.Clay)
                     {
-                        Cells[y, i] = type;
+                        // overflow left
+                        AddWater(i - 1, y - 1);
+                    }
+
+                    if (Cells[y, j + 1] != CellTypes.Clay)
+                    {
+                        // overflow right
+                        AddWater(j + 1, y - 1);
                     }
 
                     if (type == CellTypes.MovingWater)
